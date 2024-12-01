@@ -1,0 +1,49 @@
+  const int numReadings = 50;
+  int readIndex = 0;          // the index of the current reading
+  float output_total = 0;              // the running total
+  float output_average = 0;            // the average       
+  float input_total = 0;              // the running total
+  float input_average = 0;   
+            
+  int freq = 31;
+
+
+  void setup() {
+    pinMode(9, OUTPUT);
+    Serial.begin(500000);
+  }
+
+  void loop() {
+      if(freq<1200){
+        tone(9,freq);
+
+      
+      // read from the sensor:
+      float output_val = abs(analogRead(A0) - 511);
+      output_total = output_total + output_val;
+
+
+      float input_val = abs(analogRead(A1) - 511);
+      input_total = input_total + input_val;
+
+          // advance to the next position in the array:
+      readIndex = readIndex + 1;
+     
+      
+      if (readIndex >= numReadings) {
+        readIndex = 0;
+        output_average = float(output_total) / float(numReadings);
+        input_average = float(input_total) / float(numReadings);
+        Serial.print(freq);
+        Serial.print(',');
+        Serial.print(input_average);
+        Serial.print(',');
+        Serial.println(output_average);
+
+        freq = freq + 1;
+        input_total = 0;
+        output_total = 0;
+      }
+      
+    }
+  }
